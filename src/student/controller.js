@@ -30,11 +30,27 @@ const addStudent = (req, res) => {
             res.status(201).send("Student created successfully!");
         });
     });
+};
 
+const removeStudent = (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    pool.query(queries.getStudentById, [id], (error, results) => {
+        const noStudentFound = !results.rows.length;
+        if (noStudentFound) {
+            res.send("Student does not exist in the database");
+        };
+        
+        pool.query(queries.removeStudent, [id], (error, results) => {
+            if (error) throw error;
+            res.status(200).send(`Student id ${id} has been deleted!`);
+        });
+    });
 };
 
 module.exports = {
     getStudents,
     getStudentById,
     addStudent,
+    removeStudent,
 };
